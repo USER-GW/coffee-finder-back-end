@@ -10,31 +10,34 @@ const saltRounds = 12;
 //SignUp
 router.post("/sign-up", async (req, res) => {
     try {
-      //Check to see if the user already exists
-      const userInDatabase = await User.findOne({email: req.body.email});
+      // Check if the user already exists
+      const userInDatabase = await User.findOne({ email: req.body.email });
   
-      if(userInDatabase) {
-        return res.status(409).json({error: "User already exists"});
+      if (userInDatabase) {
+        return res.status(409).json({ error: "User already exists" });
       }
   
-      //Otherwise, create a new user with a hashed password
+      // Create new user with hashed password
       const user = await User.create({
         firstName: req.body.firstName,
         lastName: req.body.lastName,
         email: req.body.email,
-        hashedPassword: bcrypt.hashSync(req.body.password, saltRounds)
+        hashedPassword: bcrypt.hashSync(req.body.password, saltRounds),
       });
   
-      //Define our payload for the JWT
-      const payload = { user: user.firstName, _id: user._id };
+      // Nest the user data inside a "payload" object
+      const payload = {
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        _id: user._id,
+      };
   
-      //Create a token based on the payload
-      const token = jwt.sign({payload}, process.env.JWT_SECRET);
+      const token = jwt.sign({ payload }, process.env.JWT_SECRET);
   
-      //send the token to the client
-      res.status(201).json({token});
-    } catch(error) {
-      res.status(500).json({error: error.message});
+      res.status(201).json({ token });
+    } catch (error) {
+      res.status(500).json({ error: error.message });
     }
   });
 
@@ -55,7 +58,12 @@ router.post("/sign-up", async (req, res) => {
         }
 
         // Build a payload for the JWT to send to the client
-        const payload = {user: user.firstName, _id: user._id};
+        const payload = {
+            firstName: user.firstName,
+            lastName: user.lastName,
+            email: user.email,
+            _id: user._id,
+          };
 
     //Create a token based on the payload
     const token = jwt.sign({payload}, process.env.JWT_SECRET);
@@ -68,6 +76,23 @@ router.post("/sign-up", async (req, res) => {
     }
 });
 
+router.delete("/delete-account/:user_id", async (req, res) => {
+    const { user_id } = req.params;
+
+    try {
+        const user = await User.findOne({ _id: user_id });
+
+        if (!user) {
+            return res.status(401).json({ error: "Account not found" });
+        }
+
+        await User.deleteOne({ _id: user._id });
+
+        res.status(200).json({ message: "User deleted successfully" });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
 
 module.exports = router;
 

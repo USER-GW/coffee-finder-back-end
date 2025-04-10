@@ -12,7 +12,7 @@ const coffeeDataSchema = new mongoose.Schema({
     Cleanliness: { type: Number, min: 0, max: 5 },
     Accessability: { type: Number, min: 0, max: 5 },
     Loud: { type: Number, min: 0, max: 5 },
-    Busy: { type: Number, min: 0, max: 5 },
+    Good2Meetings: { type: Number, min: 0, max: 5 },
     Rating: { type: Number, required: true, min: 0, max: 5 },
 });
 
@@ -26,7 +26,6 @@ const shopsSchema = new mongoose.Schema({
     },
     coffeeData: {  
         type: coffeeDataSchema,
-        required: true,
     },
 });
 
