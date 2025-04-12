@@ -9,10 +9,11 @@ const coffeeDataSchema = new mongoose.Schema({
     WiFi: { type: Number, required: true, min: 0, max: 5 },
     Food: { type: Number, min: 0, max: 5 },
     Veggie: { type: Number, min: 0, max: 5 },
-    Cleanliness: { type: Number, min: 0, max: 5 },
-    Accessability: { type: Number, min: 0, max: 5 },
+    // Cleanliness: { type: Number, min: 0, max: 5 },
+    Price: { type: Number, min: 0, max: 5 },
+    Accessibility: { type: Number, min: 0, max: 5 },
     Loud: { type: Number, min: 0, max: 5 },
-    Good2Meetings: { type: Number, min: 0, max: 5 },
+    Good4Meetings: { type: Number, min: 0, max: 5 },
     Rating: { type: Number, required: true, min: 0, max: 5 },
 });
 

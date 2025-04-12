@@ -73,18 +73,18 @@ router.put("/review/:coffeeShopId",verifyToken, async (req, res) => {
     }
 });
 
-// router.delete("/:coffeeShopId", async (req, res) => {
-//     try {
-//         const { coffeeShopId } = req.params;
-//         const deletedShop = await CoffeeShops.findByIdAndDelete(coffeeShopId);
-//         if (!deletedShop) {
-//             return res.status(404).json({ message: "Coffee shop not found" });
-//         }
-//         res.status(200).json({ message: "Coffee shop deleted successfully" });
-//     } catch (error) {
-//         res.status(500).json({ error: error.message });
-//     }
-// });
+router.delete("/:coffeeShopId", async (req, res) => {
+    try {
+        const { coffeeShopId } = req.params;
+        const deletedShop = await CoffeeShops.findByIdAndDelete(coffeeShopId);
+        if (!deletedShop) {
+            return res.status(404).json({ message: "Coffee shop not found" });
+        }
+        res.status(200).json({ message: "Coffee shop deleted successfully" });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
 
 
 module.exports = router;
