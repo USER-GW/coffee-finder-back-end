@@ -30,7 +30,7 @@ const shopsSchema = new mongoose.Schema({
     },
 });
 
-// Create Models
+
 const CoffeeShops = mongoose.model('Shops', shopsSchema);
 
 module.exports = {

@@ -21,7 +21,7 @@ const userSchema = mongoose.Schema({
   },
 });
 
-// This is a Mongoose middleware that will remove the hashedPassword from the user object before returning it.
+
 userSchema.set("toJSON", {
     transform: (document, returnedObject) => {
         delete returnedObject.hashedPassword;
