@@ -12,12 +12,17 @@ router.post("/sign-up", async (req, res) => {
     try {
      
       const userInDatabase = await User.findOne({ email: req.body.email });
+      const userNameTaken = await User.findOne({ email: req.body.userName });
   
       if (userInDatabase) {
         return res.status(409).json({ error: "User already exists" });
       }
+      if (userNameTaken) {
+        return res.status(409).json({ error: "Username taken" });
+      }
   
       const user = await User.create({
+        userName: req.body.userName,
         firstName: req.body.firstName,
         lastName: req.body.lastName,
         email: req.body.email,
@@ -26,6 +31,7 @@ router.post("/sign-up", async (req, res) => {
   
 
       const payload = {
+        userName: req.body.userName,
         firstName: user.firstName,
         lastName: user.lastName,
         email: user.email,
@@ -58,6 +64,7 @@ router.post("/sign-up", async (req, res) => {
 
       
         const payload = {
+            userName: user.userName,
             firstName: user.firstName,
             lastName: user.lastName,
             email: user.email,

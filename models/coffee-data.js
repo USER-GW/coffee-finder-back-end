@@ -1,5 +1,15 @@
 const mongoose = require('mongoose');
 
+const commentSchema = new mongoose.Schema({
+    text: { type: String, required: true },
+    author: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        required: true,
+    },
+    createdAt: { type: Date, default: Date.now },
+});
+
 // Coffee Data Schema
 const coffeeDataSchema = new mongoose.Schema({
     Quality: { type: Number, required: true, min: 0, max: 5 },
@@ -28,6 +38,7 @@ const shopsSchema = new mongoose.Schema({
     coffeeData: {  
         type: coffeeDataSchema,
     },
+    comments: [commentSchema],
 });
 
 
@@ -36,3 +47,5 @@ const CoffeeShops = mongoose.model('Shops', shopsSchema);
 module.exports = {
     CoffeeShops,
 };
+
+
