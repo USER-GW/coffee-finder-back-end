@@ -9,96 +9,94 @@ const saltRounds = 12;
 
 
 router.post("/sign-up", async (req, res) => {
-    try {
-     
-      const userInDatabase = await User.findOne({ email: req.body.email });
-      const userNameTaken = await User.findOne({ email: req.body.userName });
-  
-      if (userInDatabase) {
-        return res.status(409).json({ error: "User already exists" });
-      }
-      if (userNameTaken) {
-        return res.status(409).json({ error: "Username taken" });
-      }
-  
-      const user = await User.create({
-        userName: req.body.userName,
-        firstName: req.body.firstName,
-        lastName: req.body.lastName,
-        email: req.body.email,
-        hashedPassword: bcrypt.hashSync(req.body.password, saltRounds),
-      });
-  
+  try {
+    const { userName, firstName, lastName, email, password } = req.body;
 
-      const payload = {
-        userName: req.body.userName,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        email: user.email,
-        _id: user._id,
-      };
-  
-      const token = jwt.sign({ payload }, process.env.JWT_SECRET);
-  
-      res.status(201).json({ token });
-    } catch (error) {
-      res.status(500).json({ error: error.message });
+    const userInDatabase = await User.findOne({ email });
+    const userNameTaken = await User.findOne({ userName }); 
+
+    if (userInDatabase) {
+      return res.status(409).json({ error: "User already exists" });
     }
-  });
 
-  router.post ("/sign-in", async (req, res) => {
-    try {
-        const user = await User.findOne({email: req.body.email});
-
-      
-        if (!user) {
-            return res.status(401).json({error: "Account not found"});  
-        }
-     
-        const isPasswordCorrect = bcrypt.compareSync(req.body.password, user.hashedPassword);
-
-        
-        if (!isPasswordCorrect) {
-            return res.status(401).json({error: "Invalid credentials"});
-        }
-
-      
-        const payload = {
-            userName: user.userName,
-            firstName: user.firstName,
-            lastName: user.lastName,
-            email: user.email,
-            _id: user._id,
-          };
-
-    
-    const token = jwt.sign({payload}, process.env.JWT_SECRET);
-
-   
-    res.status(200).json({token});
-
-    } catch (error) {
-        res.status(500).json({error: error.message});
+    if (userNameTaken) {
+      return res.status(409).json({ error: "Username taken" });
     }
+
+    const hashedPassword = bcrypt.hashSync(password, saltRounds);
+
+    const user = await User.create({
+      userName,
+      firstName,
+      lastName,
+      email,
+      hashedPassword,
+      favouriteShops: []
+    });
+
+    const payload = {
+      userName: user.userName,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.email,
+      _id: user._id,
+      favouriteShops: user.favouriteShops
+    };
+
+    const token = jwt.sign({ payload }, process.env.JWT_SECRET);
+    res.status(201).json({ token });
+
+  } catch (error) {
+    console.error("Sign-up error:", error);
+    res.status(500).json({ error: error.message });
+  }
 });
 
-router.delete("/delete-account/:user_id", async (req, res) => {
-    const { user_id } = req.params;
 
-    try {
-        const user = await User.findOne({ _id: user_id });
 
-        if (!user) {
-            return res.status(401).json({ error: "Account not found" });
-        }
+router.post("/sign-in", async (req, res) => {
+  try {
+    const user = await User.findOne({ email: req.body.email });
 
-        await User.deleteOne({ _id: user._id });
-
-        res.status(200).json({ message: "User deleted successfully" });
-    } catch (error) {
-        res.status(500).json({ error: error.message });
+    if (!user) {
+      return res.status(401).json({ error: "Account not found" });
     }
+
+    const isPasswordCorrect = bcrypt.compareSync(req.body.password, user.hashedPassword);
+
+    if (!isPasswordCorrect) {
+      return res.status(401).json({ error: "Invalid credentials" });
+    }
+
+    const payload = {
+      userName: user.userName,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.email,
+      _id: user._id,
+      favouriteShops: user.favouriteShops,
+    };
+
+    const token = jwt.sign({ payload }, process.env.JWT_SECRET);
+    res.status(200).json({ token });
+
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+
+router.delete("/delete-account/:user_id", async (req, res) => {
+  try {
+    const user = await User.findById(req.params.user_id);
+    if (!user) return res.status(404).json({ error: "User not found" });
+
+    await User.findByIdAndDelete(req.params.user_id);
+    res.status(200).json({ message: "User deleted successfully" });
+
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 });
 
 module.exports = router;
-

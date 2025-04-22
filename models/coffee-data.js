@@ -31,6 +31,7 @@ const shopsSchema = new mongoose.Schema({
     name: { type: String, required: true },
     location: { type: String, required: true },
     image: { type: String },
+    postcode: { type: String },
     author: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',

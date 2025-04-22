@@ -3,6 +3,11 @@ const router = express.Router();
 
 const User = require("../models/user");
 const verifyToken = require("../middleware/verify-token");
+const coffeeDataModel = require("../models/coffee-data");
+
+
+
+
 
 router.get("/", verifyToken, async (req, res) => {
   try {
@@ -12,6 +17,10 @@ router.get("/", verifyToken, async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
+
+
+
+
 
 router.get("/:userId", verifyToken, async (req, res) => {
   try {
@@ -28,5 +37,8 @@ router.get("/:userId", verifyToken, async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
+
+//ADD favourite shop
+
 
 module.exports = router;

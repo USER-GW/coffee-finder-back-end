@@ -2,8 +2,45 @@ const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose');
 const { CoffeeShops } = require('../models/coffee-data');
+const User = require('../models/user');
 
 const verifyToken = require('../middleware/verify-token')
+
+router.post("/account/:coffeeShopId/:userId", verifyToken, async (req, res) => {
+  try {
+    if (req.user._id !== req.params.userId) {
+      return res.status(403).json({ error: "Unauthorized" });
+    }
+
+    const { userId } = req.params;
+    const { coffeeShopId } = req.params;;
+
+    const user = await User.findById(userId);
+    if (!user) return res.status(404).json({ error: "User not found" });
+
+    const alreadyFav = user.favouriteShops.includes(coffeeShopId);
+
+    if (alreadyFav) {
+      user.favouriteShops = user.favouriteShops.filter(
+        (id) => id.toString() !== coffeeShopId
+      );
+    } else {
+      user.favouriteShops.push(coffeeShopId);
+    }
+
+    await user.save();
+    console.log('User ID:', userId);
+console.log('Shop ID:', coffeeShopId);
+console.log('Existing favourites:', user.favouriteShops);
+
+    res.status(200).json({
+      message: alreadyFav ? "Removed from favourites" : "Added to favourites",
+      favouriteShops: user.favouriteShops,
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
 
 router.get("/", async (req, res) => {
     try {
@@ -196,9 +233,21 @@ router.patch("/comment/:coffeeShopId/:commentId", verifyToken, async (req, res) 
       res.status(500).json({ error: error.message });
     }
   });
+
+  router.get("/account/:userId", verifyToken, async (req, res) => {
+    try {
+      if (req.user._id.toString() !== req.params.userId.toString()) {
+        return res.status(403).json({ error: "Unauthorized" });
+      }
   
-
-
-
+      const user = await User.findById(req.params.userId).populate('favouriteShops');
+      if (!user) return res.status(404).json({ error: "User not found" });
+  
+      res.status(200).json(user.favouriteShops); // ← now this is the full shop objects
+    } catch (error) {
+      console.error("Error in /account/:userId", error); // log for debugging
+      res.status(500).json({ error: error.message });
+    }
+  });
 
 module.exports = router;
