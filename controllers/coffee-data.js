@@ -6,6 +6,7 @@ const User = require('../models/user');
 
 const verifyToken = require('../middleware/verify-token')
 
+// ADD FAVOURITE
 router.post("/account/:coffeeShopId/:userId", verifyToken, async (req, res) => {
   try {
     if (req.user._id !== req.params.userId) {
@@ -243,9 +244,9 @@ router.patch("/comment/:coffeeShopId/:commentId", verifyToken, async (req, res) 
       const user = await User.findById(req.params.userId).populate('favouriteShops');
       if (!user) return res.status(404).json({ error: "User not found" });
   
-      res.status(200).json(user.favouriteShops); // ← now this is the full shop objects
+      res.status(200).json(user.favouriteShops);
     } catch (error) {
-      console.error("Error in /account/:userId", error); // log for debugging
+      console.error("Error in /account/:userId", error); 
       res.status(500).json({ error: error.message });
     }
   });
