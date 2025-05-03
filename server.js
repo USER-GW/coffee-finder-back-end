@@ -27,7 +27,18 @@ app.use(cors());
 
 
 //Routes
-app.use(cors({ origin: 'http://localhost:5173' }));
+// app.use(cors({ origin: 'http://localhost:5173' }));
+
+const allowedOrigins = [
+  'http://localhost:5173', 
+  'https://nooksandbrews.com', // live frontend
+  'https://coffee-finder-front-3bqh89hh8-georgina-walkers-projects.vercel.app/' // Vercel preview URL 
+];
+
+app.use(cors({
+  origin: allowedOrigins,
+  credentials: true
+}));
 
 app.use ("/users", userRouter)
 app.use("/", coffeeDataRouter);

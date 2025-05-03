@@ -16,11 +16,11 @@ router.post("/sign-up", async (req, res) => {
     const userNameTaken = await User.findOne({ userName }); 
 
     if (userInDatabase) {
-      return res.status(409).json({ error: "User already exists" });
+      return res.status(409).json({ err: "User already exists" });
     }
 
     if (userNameTaken) {
-      return res.status(409).json({ error: "Username taken" });
+      return res.status(409).json({ err: "Username taken" });
     }
 
     const hashedPassword = bcrypt.hashSync(password, saltRounds);
