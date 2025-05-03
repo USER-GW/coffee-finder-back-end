@@ -30,9 +30,9 @@ app.use(cors());
 // app.use(cors({ origin: 'http://localhost:5173' }));
 
 const allowedOrigins = [
-  'http://localhost:5173', 
+  // 'http://localhost:5173', 
   'https://nooksandbrews.com', // live frontend
-  'https://coffee-finder-front-3bqh89hh8-georgina-walkers-projects.vercel.app/' // Vercel preview URL 
+  // 'https://coffee-finder-front-3bqh89hh8-georgina-walkers-projects.vercel.app/' // Vercel preview URL 
 ];
 
 app.use(cors({
