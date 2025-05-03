@@ -5,6 +5,7 @@ const app = express();
 const mongoose = require('mongoose');
 const logger = require('morgan');
 const cors = require('cors');
+const helmet = require('helmet');
 
 //Models
 const coffeeDataModel = require('./models/coffee-data');
@@ -24,7 +25,7 @@ mongoose.connection.on('connected', () => {
 app.use(express.json());
 app.use(logger('dev'));
 app.use(cors());
-
+app.use(helmet());
 
 //Routes
 // app.use(cors({ origin: 'http://localhost:5173' }));
